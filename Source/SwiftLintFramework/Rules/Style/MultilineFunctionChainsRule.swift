@@ -134,7 +134,7 @@ public struct MultilineFunctionChainsRule: ASTRule, OptInRule, ConfigurationProv
 
     private static let whitespaceDotRegex = regex("\\s*\\.")
 
-    private func callDotOffset(file: SwiftLintFile, callRange: NSRange) -> Int? {
+    private func callDotOffset(file: SwiftLintFile, callRange: ByteRange) -> Int? {
         guard
             let range = file.stringView.byteRangeToNSRange(start: callRange.location, length: callRange.length),
             case let regex = type(of: self).whitespaceDotRegex,
@@ -159,25 +159,24 @@ public struct MultilineFunctionChainsRule: ASTRule, OptInRule, ConfigurationProv
     private func callRanges(file: SwiftLintFile,
                             kind: SwiftExpressionKind,
                             dictionary: SourceKittenDictionary,
-                            parentCallName: String? = nil) -> [NSRange] {
+                            parentCallName: String? = nil) -> [ByteRange] {
         guard
             kind == .call,
             case let contents = file.stringView,
-            let offset = dictionary.nameOffset,
-            let length = dictionary.nameLength,
-            let name = contents.substringWithByteRange(start: offset, length: length) else {
+            let range = dictionary.nameRange,
+            let name = contents.substringWithByteRange(range) else {
                 return []
         }
 
         let subcalls = dictionary.subcalls
 
         if subcalls.isEmpty, let parentCallName = parentCallName, parentCallName.starts(with: name) {
-            return [NSRange(location: offset, length: length)]
+            return [range]
         }
 
-        return subcalls.flatMap { call -> [NSRange] in
+        return subcalls.flatMap { call -> [ByteRange] in
             // Bail out early if there's no subcall, since this means there's no chain.
-            guard let range = subcallRange(file: file, call: call, parentName: name, parentNameOffset: offset) else {
+            guard let range = subcallRange(file: file, call: call, parentName: name, parentNameOffset: range.location) else {
                 return []
             }
 
@@ -188,25 +187,23 @@ public struct MultilineFunctionChainsRule: ASTRule, OptInRule, ConfigurationProv
     private func subcallRange(file: SwiftLintFile,
                               call: SourceKittenDictionary,
                               parentName: String,
-                              parentNameOffset: Int) -> NSRange? {
+                              parentNameOffset: ByteCount) -> ByteRange? {
         guard
             case let contents = file.stringView,
-            let nameOffset = call.nameOffset,
-            parentNameOffset == nameOffset,
-            let nameLength = call.nameLength,
-            let bodyOffset = call.bodyOffset,
-            let bodyLength = call.bodyLength,
-            let name = contents.substringWithByteRange(start: nameOffset, length: nameLength),
+            let nameRange = call.nameRange,
+            parentNameOffset == nameRange.location,
+            let bodyRange = call.bodyRange,
+            let name = contents.substringWithByteRange(nameRange),
             parentName.starts(with: name) else {
                 return nil
         }
 
-        let nameEndOffset = nameOffset + nameLength
-        let nameLengthDifference = parentName.utf8.count - nameLength
-        let offsetDifference = bodyOffset - nameEndOffset
+        let nameEndOffset = nameRange.upperBound
+        let nameLengthDifference = ByteCount(parentName.utf8.count) - nameRange.length
+        let offsetDifference = bodyRange.location - nameEndOffset
 
-        return NSRange(location: nameEndOffset + offsetDifference + bodyLength,
-                       length: nameLengthDifference - bodyLength - offsetDifference)
+        return ByteRange(location: nameEndOffset + offsetDifference + bodyRange.length,
+                         length: nameLengthDifference - bodyRange.length - offsetDifference)
     }
 }
 

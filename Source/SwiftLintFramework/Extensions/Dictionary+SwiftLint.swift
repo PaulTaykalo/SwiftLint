@@ -38,13 +38,19 @@ public struct SourceKittenDictionary {
     }
 
     /// Body length
-    var bodyLength: Int? {
-        return (value["key.bodylength"] as? Int64).flatMap({ Int($0) })
+    var bodyLength: ByteCount? {
+        return (value["key.bodylength"] as? Int64).flatMap({ ByteCount($0) })
     }
 
     /// Body offset.
-    var bodyOffset: Int? {
-        return (value["key.bodyoffset"] as? Int64).flatMap({ Int($0) })
+    var bodyOffset: ByteCount? {
+        return (value["key.bodyoffset"] as? Int64).flatMap({ ByteCount($0) })
+    }
+
+    /// Body byte range.
+    var bodyRange: ByteRange? {
+        guard let offset = bodyOffset, let length = bodyLength else { return nil }
+        return ByteRange(location: offset, length: length)
     }
 
     /// Kind.
@@ -53,8 +59,8 @@ public struct SourceKittenDictionary {
     }
 
     /// Length.
-    var length: Int? {
-        return (value["key.length"] as? Int64).flatMap({ Int($0) })
+    var length: ByteCount? {
+        return (value["key.length"] as? Int64).flatMap({ ByteCount($0) })
     }
     /// Name.
     var name: String? {
@@ -62,24 +68,31 @@ public struct SourceKittenDictionary {
     }
 
     /// Name length.
-    var nameLength: Int? {
-        return (value["key.namelength"] as? Int64).flatMap({ Int($0) })
+    var nameLength: ByteCount? {
+        return (value["key.namelength"] as? Int64).flatMap({ ByteCount($0) })
     }
 
     /// Name offset.
-    var nameOffset: Int? {
-        return (value["key.nameoffset"] as? Int64).flatMap({ Int($0) })
+    var nameOffset: ByteCount? {
+        return (value["key.nameoffset"] as? Int64).flatMap({ ByteCount($0) })
+    }
+
+
+    /// Byte range of name.
+    var nameRange: ByteRange? {
+        guard let offset = nameOffset, let length = nameLength else { return nil }
+        return ByteRange(location: offset, length: length)
     }
 
     /// Offset.
-    var offset: Int? {
-        return (value["key.offset"] as? Int64).flatMap({ Int($0) })
+    var offset: ByteCount? {
+        return (value["key.offset"] as? Int64).flatMap({ ByteCount($0) })
     }
 
     /// Returns byte range starting from `offset` with `length` bytes
-    var byteRange: NSRange? {
+    var byteRange: ByteRange? {
         guard let offset = offset, let length = length else { return nil }
-        return NSRange(location: offset, length: length)
+        return ByteRange(location: offset, length: length)
     }
 
     /// Setter accessibility.
@@ -93,13 +106,13 @@ public struct SourceKittenDictionary {
     }
 
     /// Documentation offset.
-    var docOffset: Int? {
-        return (value["key.docoffset"] as? Int64).flatMap({ Int($0) })
+    var docOffset: ByteCount? {
+        return (value["key.docoffset"] as? Int64).flatMap({ ByteCount($0) })
     }
 
     /// Documentation length.
-    var docLength: Int? {
-        return (value["key.doclength"] as? Int64).flatMap({ Int($0) })
+    var docLength: ByteCount? {
+        return (value["key.doclength"] as? Int64).flatMap({ ByteCount($0) })
     }
 
     /// The attribute for this dictionary, as returned by SourceKit.
