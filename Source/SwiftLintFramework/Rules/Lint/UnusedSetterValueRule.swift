@@ -115,7 +115,7 @@ public struct UnusedSetterValueRule: ConfigurationProviderRule, AutomaticTestabl
             let argument = findNamedArgument(after: setToken, file: file)
 
             let propertyEndOffset = bodyOffset + bodyLength
-            let setterByteRange: NSRange
+            let setterbyteRange: ByteRange
             if setToken.offset > getToken.offset { // get {} set {}
                 let startOfBody: Int
                 if let argumentToken = argument?.token {
@@ -188,7 +188,7 @@ public struct UnusedSetterValueRule: ConfigurationProviderRule, AutomaticTestabl
         })
     }
 
-    private func declarations(forByteOffset byteOffset: Int,
+    private func declarations(forByteOffset byteOffset: ByteCount,
                               structureDictionary: SourceKittenDictionary) -> [SourceKittenDictionary] {
         var results = [SourceKittenDictionary]()
         let allowedKinds = SwiftDeclarationKind.variableKinds.subtracting([.varParameter])
@@ -197,10 +197,8 @@ public struct UnusedSetterValueRule: ConfigurationProviderRule, AutomaticTestabl
             // Only accepts declarations which contains a body and contains the
             // searched byteOffset
             guard let kind = dictionary.declarationKind,
-                let bodyOffset = dictionary.bodyOffset,
-                let bodyLength = dictionary.bodyLength,
-                case let byteRange = NSRange(location: bodyOffset, length: bodyLength),
-                NSLocationInRange(byteOffset, byteRange) else {
+                let bodyByteRange = dictionary.bodyByteRange,
+                bodyByteRange.contains(byteOffset) else {
                     return
             }
 

@@ -173,7 +173,7 @@ extension LiteralExpressionEndIdentationRule: CorrectableRule {
 extension LiteralExpressionEndIdentationRule {
     fileprivate struct Violation {
         var indentationRanges: (expected: NSRange, actual: NSRange)
-        var endOffset: Int
+        var endOffset: ByteCount
         var range: NSRange
     }
 

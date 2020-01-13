@@ -48,7 +48,7 @@ public struct SourceKittenDictionary {
     }
 
     /// Body byte range.
-    var bodyRange: ByteRange? {
+    var bodyByteRange: ByteRange? {
         guard let offset = bodyOffset, let length = bodyLength else { return nil }
         return ByteRange(location: offset, length: length)
     }
@@ -79,7 +79,7 @@ public struct SourceKittenDictionary {
 
 
     /// Byte range of name.
-    var nameRange: ByteRange? {
+    var nameByteRange: ByteRange? {
         guard let offset = nameOffset, let length = nameLength else { return nil }
         return ByteRange(location: offset, length: length)
     }

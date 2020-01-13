@@ -114,21 +114,19 @@ public struct UnusedControlFlowLabelRule: SubstitutionCorrectableASTRule, Config
     public func violationRanges(in file: SwiftLintFile, kind: StatementKind,
                                 dictionary: SourceKittenDictionary) -> [NSRange] {
         guard type(of: self).kinds.contains(kind),
-            let offset = dictionary.offset, let length = dictionary.length,
-            case let byteRange = NSRange(location: offset, length: length),
+            let byteRange = dictionary.byteRange,
             case let tokens = file.syntaxMap.tokens(inByteRange: byteRange),
             let firstToken = tokens.first,
             firstToken.kind == .identifier,
             let tokenContent = file.contents(for: firstToken),
             case let contents = file.stringView,
-            let range = contents.byteRangeToNSRange(start: offset, length: length) else {
+            let range = contents.byteRangeToNSRange(byteRange) else {
                 return []
         }
 
         let pattern = "(?:break|continue)\\s+\(tokenContent)\\b"
         guard file.match(pattern: pattern, with: [.keyword, .identifier], range: range).isEmpty,
-            let violationRange = contents.byteRangeToNSRange(start: firstToken.offset,
-                                                             length: firstToken.length) else {
+            let violationRange = contents.byteRangeToNSRange(firstToken.byteRange) else {
                 return []
         }
 

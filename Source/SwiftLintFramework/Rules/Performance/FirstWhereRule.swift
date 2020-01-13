@@ -51,7 +51,7 @@ public struct FirstWhereRule: CallPairRule, OptInRule, ConfigurationProviderRule
                 return true
             }
 
-            let syntaxKinds = file.syntaxMap.kinds(inByteRange: NSRange(location: bodyOffset, length: bodyLength))
+            let syntaxKinds = file.syntaxMap.kinds(inbyteRange: ByteRange(location: bodyOffset, length: bodyLength))
             return !syntaxKinds.contains(.string)
         }
     }

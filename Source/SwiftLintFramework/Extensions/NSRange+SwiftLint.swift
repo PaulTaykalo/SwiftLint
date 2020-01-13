@@ -1,11 +1,12 @@
 import Foundation
+import SourceKittenFramework
 
-extension NSRange {
-    func intersects(_ range: NSRange) -> Bool {
-        return NSIntersectionRange(self, range).length > 0
+extension ByteRange {
+    func intersects(_ range: ByteRange) -> Bool {
+        return self.intersectionRange(with: range).length > 0
     }
 
-    func intersects(_ ranges: [NSRange]) -> Bool {
+    func intersects(_ ranges: [ByteRange]) -> Bool {
         for range in ranges where intersects(range) {
             return true
         }

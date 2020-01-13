@@ -83,7 +83,7 @@ public struct ExtensionAccessModifierRule: ASTRule, ConfigurationProviderRule, O
                 return []
         }
 
-        let declarations = dictionary.substructure.compactMap { entry -> (acl: AccessControlLevel, offset: Int)? in
+        let declarations = dictionary.substructure.compactMap { entry -> (acl: AccessControlLevel, offset: ByteCount)? in
             guard entry.declarationKind != nil,
                 let acl = entry.accessibility,
                 let offset = entry.offset else {
@@ -115,7 +115,7 @@ public struct ExtensionAccessModifierRule: ASTRule, ConfigurationProviderRule, O
     }
 
     private func declarationsViolations(file: SwiftLintFile, acl: AccessControlLevel,
-                                        declarationOffsets: [Int],
+                                        declarationOffsets: [ByteCount],
                                         dictionary: SourceKittenDictionary) -> [StyleViolation] {
         guard let offset = dictionary.offset, let length = dictionary.length,
             case let contents = file.stringView,
@@ -138,7 +138,7 @@ public struct ExtensionAccessModifierRule: ASTRule, ConfigurationProviderRule, O
             // the ACL token correspond to the type if there're only
             // attributeBuiltin (`final` for example) tokens between them
             let length = typeOffset - previousInternalByteRange.location
-            let range = NSRange(location: previousInternalByteRange.location, length: length)
+            let range = ByteRange(location: previousInternalByteRange.location, length: length)
             let internalBelongsToType = Set(file.syntaxMap.kinds(inByteRange: range)) == [.attributeBuiltin]
 
             return internalBelongsToType
@@ -151,7 +151,7 @@ public struct ExtensionAccessModifierRule: ASTRule, ConfigurationProviderRule, O
         }
     }
 
-    private func lastACLByteRange(before typeOffset: Int, in ranges: [NSRange]) -> NSRange? {
+    private func lastACLByteRange(before typeOffset: ByteCount, in ranges: [ByteRange]) -> ByteRange? {
         let firstPartition = ranges.partitioned(by: { $0.location > typeOffset }).first
         return firstPartition.last
     }

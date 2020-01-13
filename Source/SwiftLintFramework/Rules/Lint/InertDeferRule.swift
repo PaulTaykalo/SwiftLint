@@ -76,7 +76,7 @@ public struct InertDeferRule: ConfigurationProviderRule, AutomaticTestableRule {
     }
 }
 
-private func isBrace(offset: Int, element: (kind: String, byteRange: NSRange)) -> Bool {
+private func isBrace(offset: Int, element: (kind: String, byteRange: ByteRange)) -> Bool {
     return StatementKind(rawValue: element.kind) == .brace
 }
 

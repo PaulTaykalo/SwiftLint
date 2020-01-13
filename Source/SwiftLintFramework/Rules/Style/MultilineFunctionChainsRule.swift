@@ -109,7 +109,7 @@ public struct MultilineFunctionChainsRule: ASTRule, OptInRule, ConfigurationProv
                                   dictionary: SourceKittenDictionary) -> [Int] {
         let ranges = callRanges(file: file, kind: kind, dictionary: dictionary)
 
-        let calls = ranges.compactMap { range -> (dotLine: Int, dotOffset: Int, range: NSRange)? in
+        let calls = ranges.compactMap { range -> (dotLine: Int, dotOffset: Int, range: ByteRange)? in
             guard
                 let offset = callDotOffset(file: file, callRange: range),
                 let line = file.stringView.lineAndCharacter(forCharacterOffset: offset)?.line else {
@@ -146,9 +146,9 @@ public struct MultilineFunctionChainsRule: ASTRule, OptInRule, ConfigurationProv
 
     private static let newlineWhitespaceDotRegex = regex("\\n\\s*\\.")
 
-    private func callHasLeadingNewline(file: SwiftLintFile, callRange: NSRange) -> Bool {
+    private func callHasLeadingNewline(file: SwiftLintFile, callRange: ByteRange) -> Bool {
         guard
-            let range = file.stringView.byteRangeToNSRange(start: callRange.location, length: callRange.length),
+            let range = file.stringView.byteRangeToNSRange(callRange),
             case let regex = type(of: self).newlineWhitespaceDotRegex,
             regex.firstMatch(in: file.contents, options: [], range: range) != nil else {
                 return false
@@ -163,7 +163,7 @@ public struct MultilineFunctionChainsRule: ASTRule, OptInRule, ConfigurationProv
         guard
             kind == .call,
             case let contents = file.stringView,
-            let range = dictionary.nameRange,
+            let range = dictionary.nameByteRange,
             let name = contents.substringWithByteRange(range) else {
                 return []
         }
@@ -190,9 +190,9 @@ public struct MultilineFunctionChainsRule: ASTRule, OptInRule, ConfigurationProv
                               parentNameOffset: ByteCount) -> ByteRange? {
         guard
             case let contents = file.stringView,
-            let nameRange = call.nameRange,
+            let nameRange = call.nameByteRange,
             parentNameOffset == nameRange.location,
-            let bodyRange = call.bodyRange,
+            let bodyRange = call.bodyByteRange,
             let name = contents.substringWithByteRange(nameRange),
             parentName.starts(with: name) else {
                 return nil

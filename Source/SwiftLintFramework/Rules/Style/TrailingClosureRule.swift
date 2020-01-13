@@ -39,8 +39,8 @@ public struct TrailingClosureRule: OptInRule, ConfigurationProviderRule {
         }
     }
 
-    private func violationOffsets(for dictionary: SourceKittenDictionary, file: SwiftLintFile) -> [Int] {
-        var results = [Int]()
+    private func violationOffsets(for dictionary: SourceKittenDictionary, file: SwiftLintFile) -> [ByteCount] {
+        var results = [ByteCount]()
 
         if dictionary.expressionKind == .call,
             shouldBeTrailingClosure(dictionary: dictionary, file: file),

@@ -47,13 +47,12 @@ public struct NoGroupingExtensionRule: OptInRule, ConfigurationProviderRule, Aut
     private func hasWhereClause(dictionary: SourceKittenDictionary, file: SwiftLintFile) -> Bool {
         let contents = file.stringView
 
-        guard let nameOffset = dictionary.nameOffset,
-            let nameLength = dictionary.nameLength,
+        guard let nameRange = dictionary.nameByteRange,
             let bodyOffset = dictionary.bodyOffset else {
             return false
         }
 
-        let rangeStart = nameOffset + nameLength
+        let rangeStart = nameRange.upperBound
         let rangeLength = bodyOffset - rangeStart
 
         guard let range = contents.byteRangeToNSRange(start: rangeStart, length: rangeLength) else {

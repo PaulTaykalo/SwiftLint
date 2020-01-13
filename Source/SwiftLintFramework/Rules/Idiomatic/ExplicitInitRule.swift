@@ -71,7 +71,7 @@ public struct ExplicitInitRule: SubstitutionCorrectableASTRule, ConfigurationPro
                 && initializerWithType.numberOfMatches(in: name, options: [], range: range) != 0
         }
 
-        let length = ".init".utf8.count
+        let length = ByteCount(".init".utf8.count)
 
         guard kind == .call,
             let name = dictionary.name, isExpected(name),

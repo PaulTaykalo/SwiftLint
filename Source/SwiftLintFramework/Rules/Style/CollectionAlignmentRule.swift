@@ -86,8 +86,8 @@ public struct CollectionAlignmentRule: ASTRule, ConfigurationProviderRule, OptIn
         }
     }
 
-    private func colonLocation(with file: SwiftLintFile, keyOffset: Int, keyLength: Int,
-                               valueOffset: Int) -> Location? {
+    private func colonLocation(with file: SwiftLintFile, keyOffset: ByteCount, keyLength: ByteCount,
+                               valueOffset: ByteCount) -> Location? {
         let contents = file.stringView
         let matchStart = keyOffset + keyLength
         let matchLength = valueOffset - matchStart

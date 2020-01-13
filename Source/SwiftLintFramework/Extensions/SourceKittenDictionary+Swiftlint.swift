@@ -1,4 +1,5 @@
 import Foundation
+import SourceKittenFramework
 
 extension SourceKittenDictionary {
     /// Returns array of tuples containing "key.kind" and "byteRange" from Structure
@@ -7,9 +8,9 @@ extension SourceKittenDictionary {
     /// - parameter byteOffset: Int?
     ///
     /// - returns: The kinds and byte ranges.
-    internal func kinds(forByteOffset byteOffset: Int? = nil)
-        -> [(kind: String, byteRange: NSRange)] {
-        var results = [(kind: String, byteRange: NSRange)]()
+    internal func kinds(forByteOffset byteOffset: ByteCount? = nil)
+        -> [(kind: String, byteRange: ByteRange)] {
+        var results = [(kind: String, byteRange: ByteRange)]()
 
         func parse(_ dictionary: SourceKittenDictionary) {
             guard let offset = dictionary.offset,
@@ -28,7 +29,7 @@ extension SourceKittenDictionary {
         return results
     }
 
-    internal func structures(forByteOffset byteOffset: Int) -> [SourceKittenDictionary] {
+    internal func structures(forByteOffset byteOffset: ByteCount) -> [SourceKittenDictionary] {
         var results = [SourceKittenDictionary]()
 
         func parse(_ dictionary: SourceKittenDictionary) {

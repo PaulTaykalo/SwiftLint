@@ -120,16 +120,15 @@ public struct RedundantOptionalInitializationRule: SubstitutionCorrectableASTRul
     }
 
     private func range(for dictionary: SourceKittenDictionary, file: SwiftLintFile) -> NSRange? {
-        guard let offset = dictionary.offset,
-            let length = dictionary.length else {
-                return nil
+        guard let byteRange = dictionary.byteRange else {
+            return nil
         }
 
         let contents = file.stringView
         if let bodyOffset = dictionary.bodyOffset {
-            return contents.byteRangeToNSRange(start: offset, length: bodyOffset - offset)
+            return contents.byteRangeToNSRange(ByteRange(location: byteRange.location, length: bodyOffset - byteRange.location))
         } else {
-            return contents.byteRangeToNSRange(start: offset, length: length)
+            return contents.byteRangeToNSRange(byteRange)
         }
     }
 
@@ -148,9 +147,9 @@ extension SourceKittenDictionary {
     }
 
     private func isVariable(file: SwiftLintFile) -> Bool {
-        guard let start = offset, let length = length,
+        guard let byteRange = byteRange,
             case let contents = file.stringView,
-            let range = contents.byteRangeToNSRange(start: start, length: length),
+            let range = contents.byteRangeToNSRange(byteRange),
             !file.match(pattern: "\\Avar\\b", with: [.keyword], range: range).isEmpty else {
                 return false
         }

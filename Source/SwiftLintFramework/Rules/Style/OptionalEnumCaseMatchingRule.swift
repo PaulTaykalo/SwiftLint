@@ -174,7 +174,7 @@ public struct OptionalEnumCaseMatchingRule: SubstitutionCorrectableASTRule, Conf
 
                 let tokensToCheck = (tupleCommaByteOffsets + [length]).compactMap { length in
                     return file.syntaxMap
-                        .tokens(inByteRange: NSRange(location: offset, length: length))
+                        .tokens(inbyteRange: ByteRange(location: offset, length: length))
                         .prefix { $0.kind != .keyword || file.isTokenUnderscoreKeyword($0) }
                         .last
                 }

@@ -31,7 +31,7 @@ public struct DiscouragedOptionalCollectionRule: ASTRule, OptInRule, Configurati
 
     private func variableViolations(file: SwiftLintFile,
                                     kind: SwiftDeclarationKind,
-                                    dictionary: SourceKittenDictionary) -> [Int] {
+                                    dictionary: SourceKittenDictionary) -> [ByteCount] {
         guard
             SwiftDeclarationKind.variableKinds.contains(kind),
             let offset = dictionary.offset,
@@ -42,7 +42,7 @@ public struct DiscouragedOptionalCollectionRule: ASTRule, OptInRule, Configurati
 
     private func functionViolations(file: SwiftLintFile,
                                     kind: SwiftDeclarationKind,
-                                    dictionary: SourceKittenDictionary) -> [Int] {
+                                    dictionary: SourceKittenDictionary) -> [ByteCount] {
         guard
             SwiftDeclarationKind.functionKinds.contains(kind),
             let nameOffset = dictionary.nameOffset,

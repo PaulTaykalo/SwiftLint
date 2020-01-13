@@ -131,7 +131,7 @@ public struct UnusedCaptureListRule: ASTRule, ConfigurationProviderRule, Automat
             }
     }
 
-    private func identifierStrings(in file: SwiftLintFile, byteRange: NSRange) -> Set<String> {
+    private func identifierStrings(in file: SwiftLintFile, byteRange: ByteRange) -> Set<String> {
         let identifiers = file.syntaxMap
             .tokens(inByteRange: byteRange)
             .compactMap { token -> String? in

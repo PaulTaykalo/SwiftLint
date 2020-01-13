@@ -19,12 +19,12 @@ public struct SwiftLintSyntaxMap {
 
     /// Returns array of syntax tokens intersecting with byte range.
     ///
-    /// - parameter byteRange: Byte-based NSRange.
+    /// - parameter byteRange: byte range.
     ///
     /// - returns: The array of syntax tokens intersecting with byte range.
-    internal func tokens(inByteRange byteRange: NSRange) -> [SwiftLintSyntaxToken] {
+    internal func tokens(inByteRange byteRange: ByteRange) -> [SwiftLintSyntaxToken] {
         func intersect(_ token: SwiftLintSyntaxToken) -> Bool {
-            return token.range.intersects(byteRange)
+            return token.byteRange.intersects(byteRange)
         }
 
         func intersectsOrAfter(_ token: SwiftLintSyntaxToken) -> Bool {
@@ -49,7 +49,7 @@ public struct SwiftLintSyntaxMap {
     /// - parameter byteRange: Byte-based NSRange.
     ///
     /// - returns: The syntax kinds in the specified byte range.
-    internal func kinds(inByteRange byteRange: NSRange) -> [SyntaxKind] {
+    internal func kinds(inByteRange byteRange: ByteRange) -> [SyntaxKind] {
         return tokens(inByteRange: byteRange).compactMap { $0.kind }
     }
 }

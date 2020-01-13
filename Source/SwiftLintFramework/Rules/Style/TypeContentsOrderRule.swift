@@ -1,7 +1,7 @@
 import SourceKittenFramework
 
 public struct TypeContentsOrderRule: ConfigurationProviderRule, OptInRule {
-    private typealias TypeContentOffset = (typeContent: TypeContent, offset: Int)
+    private typealias TypeContentOffset = (typeContent: TypeContent, offset: ByteCount)
 
     public var configuration = TypeContentsOrderConfiguration()
 

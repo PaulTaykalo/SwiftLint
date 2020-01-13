@@ -39,7 +39,7 @@ public struct UnownedVariableCaptureRule: ASTRule, OptInRule, ConfigurationProvi
         }
 
         let length = inTokenByteRange.location - bodyOffset
-        let variables = localVariableDeclarations(inByteRange: NSRange(location: bodyOffset, length: length),
+        let variables = localVariableDeclarations(inByteRange: ByteRange(location: bodyOffset, length: length),
                                                   structureDictionary: file.structureDictionary)
         let unownedVariableOffsets = variables.compactMap { dictionary in
             return dictionary.swiftAttributes.first { attributeDict in
@@ -59,7 +59,7 @@ public struct UnownedVariableCaptureRule: ASTRule, OptInRule, ConfigurationProvi
         }
     }
 
-    private func localVariableDeclarations(inByteRange byteRange: NSRange,
+    private func localVariableDeclarations(inByteRange byteRange: ByteRange,
                                            structureDictionary: SourceKittenDictionary) -> [SourceKittenDictionary] {
         return structureDictionary.traverseBreadthFirst { dictionary in
             guard dictionary.declarationKind == .varLocal,
