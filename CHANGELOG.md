@@ -20,7 +20,7 @@
 
 #### Breaking
 
-* The new rules introduced in 0.39.0 that depend on SwiftSyntax have been
+* The new rules introduced in 0.39.0 that depend on SwiftSyntax have been  
   temporarily removed as we work out release packaging issues.
     * `prohibited_nan_comparison`
     * `return_value_from_void_function`
